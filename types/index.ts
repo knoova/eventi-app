@@ -14,6 +14,118 @@ export enum EventStatus {
   COMPLETED = 'COMPLETED'
 }
 
+// ==================== CATEGORIE EVENTI ====================
+export enum EventMacroCategory {
+  CONCERT = 'CONCERT',
+  CLUB = 'CLUB',
+  PUB_BAR = 'PUB_BAR',
+  FESTIVAL = 'FESTIVAL',
+  PRIVATE_PARTY = 'PRIVATE_PARTY',
+  LIVE_SHOW = 'LIVE_SHOW',
+  ROOFTOP_APERITIF = 'ROOFTOP_APERITIF',
+  BEACH_PARTY = 'BEACH_PARTY',
+  AFTERPARTY = 'AFTERPARTY',
+  STREET_EVENT = 'STREET_EVENT',
+  BOAT_PARTY = 'BOAT_PARTY',
+  RAVE_UNDERGROUND = 'RAVE_UNDERGROUND'
+}
+
+export enum MusicGenre {
+  TECHNO = 'TECHNO',
+  HOUSE = 'HOUSE',
+  DEEP_HOUSE = 'DEEP_HOUSE',
+  EDM = 'EDM',
+  TRANCE = 'TRANCE',
+  DRUM_AND_BASS = 'DRUM_AND_BASS',
+  HIP_HOP = 'HIP_HOP',
+  R_AND_B = 'R_AND_B',
+  REGGAETON = 'REGGAETON',
+  TRAP = 'TRAP',
+  POP_COMMERCIAL = 'POP_COMMERCIAL',
+  ROCK_INDIE = 'ROCK_INDIE',
+  PUNK = 'PUNK',
+  METAL = 'METAL',
+  JAZZ = 'JAZZ',
+  BLUES = 'BLUES',
+  FUNK = 'FUNK',
+  DISCO_RETRO = 'DISCO_RETRO',
+  KPOP = 'KPOP',
+  LATIN = 'LATIN',
+  AFROBEAT = 'AFROBEAT',
+  ELECTRONIC_EXPERIMENTAL = 'ELECTRONIC_EXPERIMENTAL',
+  ACOUSTIC_UNPLUGGED = 'ACOUSTIC_UNPLUGGED',
+  LIVE_MUSIC = 'LIVE_MUSIC'
+}
+
+export enum ExperienceType {
+  DJ_SET = 'DJ_SET',
+  LIVE_BAND = 'LIVE_BAND',
+  JAM_SESSION = 'JAM_SESSION',
+  SILENT_DISCO = 'SILENT_DISCO',
+  KARAOKE = 'KARAOKE',
+  DANCE_SHOW = 'DANCE_SHOW',
+  OPEN_MIC = 'OPEN_MIC',
+  GUEST_STAR = 'GUEST_STAR',
+  VISUAL_SHOW = 'VISUAL_SHOW',
+  TRIBUTE_BAND = 'TRIBUTE_BAND'
+}
+
+export enum EventFormat {
+  INDOOR = 'INDOOR',
+  OUTDOOR = 'OUTDOOR',
+  BEACH = 'BEACH',
+  BOAT = 'BOAT',
+  POOL = 'POOL',
+  MOUNTAIN = 'MOUNTAIN',
+  SECRET_LOCATION = 'SECRET_LOCATION'
+}
+
+export enum EventAtmosphere {
+  CHIC_DRESS_CODE = 'CHIC_DRESS_CODE',
+  CASUAL = 'CASUAL',
+  UNDERGROUND = 'UNDERGROUND',
+  LGBTQ_FRIENDLY = 'LGBTQ_FRIENDLY',
+  INTERNATIONAL = 'INTERNATIONAL',
+  OVER_30 = 'OVER_30',
+  UNIVERSITY = 'UNIVERSITY',
+  ALL_AGES = 'ALL_AGES',
+  LOCAL_ONLY = 'LOCAL_ONLY'
+}
+
+// Filtri smart per UX
+export enum PriceRange {
+  FREE = 'FREE',
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  VIP = 'VIP'
+}
+
+export enum EventTimeSlot {
+  EARLY = 'EARLY', // 18:00-22:00
+  NIGHT = 'NIGHT', // 22:00-02:00
+  AFTERHOURS = 'AFTERHOURS' // 02:00+
+}
+
+export enum EventMood {
+  CHILL = 'CHILL',
+  ENERGETIC = 'ENERGETIC',
+  ROMANTIC = 'ROMANTIC',
+  EXTREME = 'EXTREME'
+}
+
+export interface EventAccessibility {
+  petFriendly: boolean;
+  wheelchairAccessible: boolean;
+  inviteOnly: boolean;
+}
+
+export interface EventFoodDrink {
+  streetFood: boolean;
+  openBar: boolean;
+  cocktailsOnly: boolean;
+  restaurantService: boolean;
+}
+
 export enum TicketType {
   ENTRANCE = 'ENTRANCE',
   SINGLE_DRINK = 'SINGLE_DRINK',
@@ -59,11 +171,18 @@ export interface UserProfile {
   birthPlace: string;
   profileImage?: string;
   
-  // Preferenze
+  // Preferenze (AGGIORNATE)
   interests: string[]; // hashtags di interesse
-  musicGenres: string[]; // gusti musicali
-  eventTypes: string[]; // tipologie eventi preferiti
+  favoriteGenres: MusicGenre[]; // Generi musicali preferiti
+  favoriteCategories: EventMacroCategory[]; // Categorie eventi preferite
+  favoriteExperiences: ExperienceType[]; // Tipi di esperienza preferiti
+  preferredAtmospheres: EventAtmosphere[]; // Atmosfere preferite
+  preferredMoods: EventMood[]; // Mood preferiti
   defaultLocation?: LocationData;
+  
+  // Preferenze filtri (NUOVO)
+  pricePreference?: PriceRange;
+  timeSlotPreference?: EventTimeSlot[];
   
   // Compliance
   privacyAcceptedAt: Date;
@@ -148,6 +267,25 @@ export interface Event {
   endDate: Date;
   location: LocationData;
   venue?: string; // Nome specifico venue se diverso da business
+  
+  // Categorizzazione (NUOVO)
+  macroCategory: EventMacroCategory;
+  musicGenres: MusicGenre[]; // Può avere più generi
+  experienceTypes: ExperienceType[]; // Può offrire più esperienze
+  format: EventFormat;
+  atmospheres: EventAtmosphere[]; // Può avere più atmosfere
+  
+  // Filtri smart (NUOVO)
+  priceRange: PriceRange;
+  timeSlot: EventTimeSlot;
+  mood: EventMood;
+  accessibility: EventAccessibility;
+  foodDrink: EventFoodDrink;
+  
+  // Età e restrizioni (NUOVO)
+  minAge?: number; // null = all ages
+  maxCapacity: number;
+  currentCapacity?: number; // Per eventi con limite
   
   // Stato e visibilità
   status: EventStatus;
@@ -313,6 +451,20 @@ export interface EventAnalytics {
   grossRevenue: number;
   netRevenue: number;
   platformFees: number;
+  
+  // Demografia (NUOVO)
+  viewsByAgeGroup?: {
+    '18-24': number;
+    '25-34': number;
+    '35-44': number;
+    '45+': number;
+  };
+  
+  // Interessi (NUOVO)
+  viewerInterests?: {
+    genre: MusicGenre;
+    count: number;
+  }[];
 }
 
 export interface BusinessAnalytics {
@@ -379,15 +531,45 @@ export interface EventSearchParams {
   };
   dateFrom?: Date;
   dateTo?: Date;
+  
+  // Categorie e generi (AGGIORNATO)
+  macroCategories?: EventMacroCategory[];
+  musicGenres?: MusicGenre[];
+  experienceTypes?: ExperienceType[];
+  formats?: EventFormat[];
+  atmospheres?: EventAtmosphere[];
+  
+  // Filtri smart (NUOVO)
+  priceRange?: PriceRange[];
+  timeSlots?: EventTimeSlot[];
+  moods?: EventMood[];
+  
+  // Altri filtri (NUOVO)
+  minAge?: number;
+  accessibility?: {
+    petFriendly?: boolean;
+    wheelchairAccessible?: boolean;
+    inviteOnly?: boolean;
+  };
+  foodDrink?: {
+    streetFood?: boolean;
+    openBar?: boolean;
+    cocktailsOnly?: boolean;
+    restaurantService?: boolean;
+  };
+  
+  // Esistenti
   hashtags?: string[];
-  musicGenres?: string[];
   ticketTypes?: TicketType[];
   priceMin?: number;
   priceMax?: number;
   onlySpecial?: boolean;
+  onlyAvailable?: boolean; // Solo eventi con biglietti disponibili
+  
+  // Paginazione e ordinamento
   page?: number;
   pageSize?: number;
-  sortBy?: 'date' | 'distance' | 'price' | 'popularity';
+  sortBy?: 'date' | 'distance' | 'price' | 'popularity' | 'trending';
   sortOrder?: 'asc' | 'desc';
 }
 
@@ -412,6 +594,133 @@ export interface UserSession {
   expiresAt: Date;
 }
 
-export interface EventType {
+// ==================== UTILITY TYPES ====================
+// Per le label nel frontend
+export const EventMacroCategoryLabels: Record<EventMacroCategory, string> = {
+  [EventMacroCategory.CONCERT]: 'Concerti',
+  [EventMacroCategory.CLUB]: 'Discoteche / Club',
+  [EventMacroCategory.PUB_BAR]: 'Pub & Bar con eventi',
+  [EventMacroCategory.FESTIVAL]: 'Festival',
+  [EventMacroCategory.PRIVATE_PARTY]: 'Eventi Privati / Party esclusivi',
+  [EventMacroCategory.LIVE_SHOW]: 'Live Show / Performance',
+  [EventMacroCategory.ROOFTOP_APERITIF]: 'Rooftop & Aperitivi musicali',
+  [EventMacroCategory.BEACH_PARTY]: 'Beach Party',
+  [EventMacroCategory.AFTERPARTY]: 'Afterparty',
+  [EventMacroCategory.STREET_EVENT]: 'Street Events / Urban vibes',
+  [EventMacroCategory.BOAT_PARTY]: 'Boat Party / Crociere musicali',
+  [EventMacroCategory.RAVE_UNDERGROUND]: 'Rave & Underground'
+};
+
+export const MusicGenreLabels: Record<MusicGenre, string> = {
+  [MusicGenre.TECHNO]: 'Techno',
+  [MusicGenre.HOUSE]: 'House',
+  [MusicGenre.DEEP_HOUSE]: 'Deep House',
+  [MusicGenre.EDM]: 'EDM',
+  [MusicGenre.TRANCE]: 'Trance',
+  [MusicGenre.DRUM_AND_BASS]: 'Drum & Bass',
+  [MusicGenre.HIP_HOP]: 'Hip Hop',
+  [MusicGenre.R_AND_B]: 'R&B',
+  [MusicGenre.REGGAETON]: 'Reggaeton',
+  [MusicGenre.TRAP]: 'Trap',
+  [MusicGenre.POP_COMMERCIAL]: 'Pop Commerciale',
+  [MusicGenre.ROCK_INDIE]: 'Rock / Indie',
+  [MusicGenre.PUNK]: 'Punk',
+  [MusicGenre.METAL]: 'Metal',
+  [MusicGenre.JAZZ]: 'Jazz',
+  [MusicGenre.BLUES]: 'Blues',
+  [MusicGenre.FUNK]: 'Funk',
+  [MusicGenre.DISCO_RETRO]: 'Disco \'70/\'80/\'90',
+  [MusicGenre.KPOP]: 'K-pop',
+  [MusicGenre.LATIN]: 'Latin / Salsa / Bachata',
+  [MusicGenre.AFROBEAT]: 'Afrobeat',
+  [MusicGenre.ELECTRONIC_EXPERIMENTAL]: 'Elettronica Sperimentale',
+  [MusicGenre.ACOUSTIC_UNPLUGGED]: 'Acustico / Unplugged',
+  [MusicGenre.LIVE_MUSIC]: 'Musica dal vivo'
+};
+
+export const EventMoodLabels: Record<EventMood, string> = {
+  [EventMood.CHILL]: 'Chill',
+  [EventMood.ENERGETIC]: 'Energico',
+  [EventMood.ROMANTIC]: 'Romantico',
+  [EventMood.EXTREME]: 'Estremo'
+};
+
+export const PriceRangeLabels: Record<PriceRange, string> = {
+  [PriceRange.FREE]: 'Gratis',
+  [PriceRange.LOW]: 'Economico',
+  [PriceRange.MEDIUM]: 'Medio',
+  [PriceRange.VIP]: 'VIP'
+};
+
+export const EventTimeSlotLabels: Record<EventTimeSlot, string> = {
+  [EventTimeSlot.EARLY]: 'Early (18:00-22:00)',
+  [EventTimeSlot.NIGHT]: 'Night (22:00-02:00)',
+  [EventTimeSlot.AFTERHOURS]: 'Afterhours (02:00+)'
+};
+
+// Definizione orari per time slot
+export const TimeSlotRanges: Record<EventTimeSlot, { start: number; end: number }> = {
+  [EventTimeSlot.EARLY]: { start: 18, end: 22 },
+  [EventTimeSlot.NIGHT]: { start: 22, end: 2 },
+  [EventTimeSlot.AFTERHOURS]: { start: 2, end: 6 }
+};
+
+// Helper per suggerimenti basati su categorie
+export const CategorySuggestions: Partial<Record<EventMacroCategory, {
+  suggestedGenres: MusicGenre[];
+  suggestedExperiences: ExperienceType[];
+  suggestedFormats: EventFormat[];
+  suggestedAtmospheres: EventAtmosphere[];
+}>> = {
+  [EventMacroCategory.CLUB]: {
+    suggestedGenres: [MusicGenre.TECHNO, MusicGenre.HOUSE, MusicGenre.EDM],
+    suggestedExperiences: [ExperienceType.DJ_SET, ExperienceType.VISUAL_SHOW],
+    suggestedFormats: [EventFormat.INDOOR],
+    suggestedAtmospheres: [EventAtmosphere.UNDERGROUND, EventAtmosphere.CHIC_DRESS_CODE]
+  },
+  [EventMacroCategory.BEACH_PARTY]: {
+    suggestedGenres: [MusicGenre.HOUSE, MusicGenre.REGGAETON, MusicGenre.LATIN],
+    suggestedExperiences: [ExperienceType.DJ_SET, ExperienceType.DANCE_SHOW],
+    suggestedFormats: [EventFormat.BEACH, EventFormat.OUTDOOR],
+    suggestedAtmospheres: [EventAtmosphere.CASUAL, EventAtmosphere.INTERNATIONAL]
+  },
+  // ... altri suggerimenti per altre categorie
+};
+
+// ==================== RECOMMENDATION INTERFACES ====================
+export interface EventRecommendation {
+  event: Event;
+  score: number; // 0-100
+  reasons: RecommendationReason[];
+}
+
+export interface RecommendationReason {
+  type: 'genre_match' | 'category_match' | 'location_proximity' | 'time_preference' | 
+        'atmosphere_match' | 'price_range' | 'trending' | 'friends_attending';
+  description: string;
+  weight: number; // Peso nel calcolo del punteggio
+}
+
+// Per l'algoritmo di raccomandazione
+export interface UserEventPreferences {
+  userId: string;
   
+  // Cronologia interazioni
+  viewedEvents: string[]; // ID eventi visualizzati
+  purchasedEvents: string[]; // ID eventi acquistati
+  likedEvents: string[]; // ID eventi piaciuti
+  
+  // Preferenze derivate dal comportamento
+  preferredTimeSlots: Record<EventTimeSlot, number>; // Peso per fascia oraria
+  preferredPriceRanges: Record<PriceRange, number>; // Peso per fascia prezzo
+  genreAffinities: Record<MusicGenre, number>; // Affinità 0-100 per genere
+  categoryAffinities: Record<EventMacroCategory, number>; // Affinità per categoria
+  
+  // Località frequentate
+  frequentLocations: {
+    location: LocationData;
+    visitCount: number;
+  }[];
+  
+  lastUpdated: Date;
 }
