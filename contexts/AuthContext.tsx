@@ -143,7 +143,7 @@ export const useRequireAuth = (allowedRoles?: UserRole[]) => {
 };
 
 // Hook per redirect se autenticato
-export const useRedirectIfAuthenticated = (redirectTo: string = '/') => {
+export const useRedirectIfAuthenticated = (redirectTo: string = '/dashboard') => {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 

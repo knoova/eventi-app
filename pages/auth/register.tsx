@@ -145,7 +145,7 @@ export default function RegisterPage() {
       });
 
       if (result?.ok) {
-        router.push('/');
+        router.push('/dashboard');
       }
     } catch (error: any) {
       console.error('Errore registrazione:', error);
@@ -167,7 +167,7 @@ export default function RegisterPage() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      await signIn('google', { callbackUrl: '/' });
+      await signIn('google', { callbackUrl: '/dashboard' });
     } catch (error) {
       enqueueSnackbar('Errore durante il login con Google', { variant: 'error' });
     } finally {
@@ -447,7 +447,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (session) {
     return {
       redirect: {
-        destination: '/',
+        destination: '/dashboard',
         permanent: false,
       },
     };

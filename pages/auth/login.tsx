@@ -94,9 +94,8 @@ export default function LoginPage() {
       } else {
         enqueueSnackbar('Login effettuato con successo!', { variant: 'success' });
         
-        // Redirect basato sul tipo di utente
         const callbackUrl = router.query.callbackUrl as string;
-        router.push(callbackUrl || (tabValue === 1 ? '/business/dashboard' : '/'));
+        router.push(callbackUrl || '/dashboard');
       }
     } catch (error) {
       setError('Si è verificato un errore durante il login');
@@ -109,7 +108,7 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      await signIn('google', { callbackUrl: '/' });
+      await signIn('google', { callbackUrl: '/dashboard' });
     } catch (error) {
       enqueueSnackbar('Errore durante il login con Google', { variant: 'error' });
     } finally {
@@ -281,7 +280,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (session) {
     return {
       redirect: {
-        destination: '/',
+        destination: '/dashboard',
         permanent: false,
       },
     };
