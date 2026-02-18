@@ -2,9 +2,10 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserRole } from '@/types';
 
-export default function HomePage() {
-  const { isLoading, isAuthenticated } = useAuth();
+export default function DashboardRouter() {
+  const { user, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -12,10 +13,22 @@ export default function HomePage() {
 
     if (!isAuthenticated) {
       router.replace('/auth/login');
-    } else {
-      router.replace('/dashboard');
+      return;
     }
-  }, [isLoading, isAuthenticated, router]);
+
+    switch (user?.role) {
+      case UserRole.BUSINESS:
+        router.replace('/business/dashboard');
+        break;
+      case UserRole.ADMIN:
+        router.replace('/admin/dashboard');
+        break;
+      case UserRole.CUSTOMER:
+      default:
+        router.replace('/dashboard/customer');
+        break;
+    }
+  }, [isLoading, isAuthenticated, user, router]);
 
   return (
     <Box
@@ -29,7 +42,7 @@ export default function HomePage() {
       }}
     >
       <CircularProgress />
-      <Typography color="text.secondary">Caricamento...</Typography>
+      <Typography color="text.secondary">Caricamento dashboard...</Typography>
     </Box>
   );
 }
